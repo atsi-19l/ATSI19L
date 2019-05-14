@@ -18,6 +18,3 @@ table_add egress.mac_rewriting_table set_smac 1 => 00:01:00:00:00:01
 table_add egress.mac_rewriting_table set_smac 2 => 00:01:00:00:00:02
 table_add egress.mac_rewriting_table set_smac 3 => 00:01:00:00:00:03
 table_add egress.mac_rewriting_table set_smac 4 => 00:01:00:00:00:04
-
-
-
