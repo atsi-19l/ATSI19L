@@ -5,13 +5,19 @@ table_set_default egress.mac_rewriting_table drop
 table_add ingress.routing_table ipv4_forward 10.10.10.0/30 => 10.10.10.1    1
 table_add ingress.routing_table ipv4_forward 10.10.30.0/30 => 10.10.30.1    2
 table_add ingress.routing_table ipv4_forward 10.10.20.0/30 => 192.168.3.2   3
+table_add ingress.routing_table ipv4_forward 10.10.40.0/30 => 192.168.1.2   4
 
 
 table_add egress.switching_table set_dmac 10.10.10.1 => 00:00:00:00:00:01
 table_add egress.switching_table set_dmac 10.10.30.1 => 00:00:00:00:00:03
 table_add egress.switching_table set_dmac 192.168.3.2 => 00:00:00:00:02:01
+table_add egress.switching_table set_dmac 192.168.1.2 => 00:00:00:00:04:01
 
 
 table_add egress.mac_rewriting_table set_smac 1 => 00:01:00:00:00:01
 table_add egress.mac_rewriting_table set_smac 2 => 00:01:00:00:00:02
 table_add egress.mac_rewriting_table set_smac 3 => 00:01:00:00:00:03
+table_add egress.mac_rewriting_table set_smac 4 => 00:01:00:00:00:04
+
+
+
