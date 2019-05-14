@@ -10,4 +10,4 @@ simple_switch_CLI --thrift-port 9092 < s2-commands
 simple_switch_CLI --thrift-port 9093 < s3-commands
 
 # Install flow rules for switch S4
-#simple_switch_CLI --thrift-port 9094 < s4-commands
+simple_switch_CLI --thrift-port 9094 < s4-commands
