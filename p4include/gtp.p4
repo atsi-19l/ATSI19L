@@ -66,6 +66,7 @@ header mpls_t mpls;
 header udp_t udp;
 header udp_t udp_gtp;
 header ipv4_t ipv4_gtp;
+header ethernet_t ethernet_gtp;
 
 /** PARSERS **/
 
@@ -83,7 +84,6 @@ parser parse_ethernet {
 }
 
 parser parse_ipv4 {
-	//No idea how to differentiate between ipv4 used by gtp, and normal ipv4, so it may be a problem in tables
     extract(ipv4);
     return select(latest.protocol) {
         IPV4_UDP : parse_udp;
@@ -102,7 +102,6 @@ parser parse_mpls {
 }
 
 parser parse_udp {
-		//No idea how to differentiate between udp used by gtp, and normal udp, so it may be a problem in tables
     extract(udp);
             return select(latest.dstPort) {
             UDP_GTP_PORT:  parse_gtp;
@@ -110,36 +109,36 @@ parser parse_udp {
         }
 }
 parser parse_gtp {
+//Can i just use "=" to say that other header should take all the data of another?
+	ipv4_gtp=ipv4;
+	udp_gtp=udp;
+	ethernet_gtp=ethernet;
     extract(gtp);
-        return ingress;
+	
+    return parse_ethernet;
 }
 
 action _drop() {
     drop();
 }
 
-action push_mpls(label) {
-    add_header(mpls);
-    modify_field(mpls.label, label);
-    modify_field(mpls.tc, 7);
-    modify_field(mpls.bos, 0x1);
-    modify_field(mpls.ttl, 32);
-    modify_field(ethernet.etherType, ETHERTYPE_MPLS);
-}
 action push_gtp(tunelId, dstAddr) {
+//I don't know if adding four headers in one function is legal?
 	add_header(gtp);
 	modify_field(gtp.tunnelEndID, tunelId);
-	//Part used only if you need to add UDP and IPv4 too
 	add_header(udp_gtp);
 	modify_field(udp_gtp.srcPort, UDP_GTP_PORT);
 	modify_field(udp_gtp.dstPort, UDP_GTP_PORT);
 	add_header(ipv4_gtp);
 	modify_field(ipv4_gtp.dstAddr, dstAddr);
+	add_header(ethernet_gtp);
+	modify_field(ethernet_gtp.etherType, ETHERTYPE_IPV4);
 }
 
 action pop_gtp(){
-	remove_header(ipv4);
-	remove_header(udp);
+	remove_header(ethernet_gtp);
+	remove_header(ipv4_gtp);
+	remove_header(udp_gtp);
 	remove_header(gtp);
 }
 
