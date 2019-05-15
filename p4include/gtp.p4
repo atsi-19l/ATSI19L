@@ -1,5 +1,4 @@
 #define ETHERTYPE_IPV4 0x0800
-#define ETHERTYPE_MPLS 0x8847
 #define IPV4_UDP       0x11
 #define UDP_GTP_PORT 2152
 
@@ -8,15 +7,6 @@ header_type ethernet_t {
         dstAddr : 48;
         srcAddr : 48;
         etherType : 16;
-    }
-}
-
-header_type mpls_t {
-    fields {
-        label : 20;
-        tc : 3; // traffic class field
-        bos : 1; // indicates if it's bottom of MPLS label's stack
-        ttl: 8;
     }
 }
 
@@ -62,7 +52,6 @@ header_type gtp_t {
 header gtp_t gtp;
 header ethernet_t ethernet;
 header ipv4_t ipv4;
-header mpls_t mpls;
 header udp_t udp;
 header udp_t udp_gtp;
 header ipv4_t ipv4_gtp;
@@ -78,7 +67,6 @@ parser parse_ethernet {
     extract(ethernet);
     return select(latest.etherType) {
         ETHERTYPE_IPV4 : parse_ipv4;
-        ETHERTYPE_MPLS : parse_mpls;
         default: ingress;
     }
 }
@@ -91,15 +79,6 @@ parser parse_ipv4 {
     }
 }
 
-parser parse_mpls {
-    extract(mpls);
-    //return select(latest.bos) {
-    //    0 : parse_mpls; // parse MPLS header recursively.
-    //    1 : parse_mpls_bos; // parse the last MPLS header in stack
-    //    default: ingress;
-    //}
-    return parse_ipv4;
-}
 
 parser parse_udp {
     extract(udp);
