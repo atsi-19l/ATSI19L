@@ -123,7 +123,7 @@ action _drop() {
 }
 
 action push_gtp(tunelId, dstAddr) {
-//I don't know if adding four headers in one function is legal?
+//Is adding four headers in one function is legal?
 	add_header(gtp);
 	modify_field(gtp.tunnelEndID, tunelId);
 	add_header(udp_gtp);
