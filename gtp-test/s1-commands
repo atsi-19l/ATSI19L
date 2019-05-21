@@ -1,0 +1,14 @@
+table_add fec_table push_gtp 10.0.20.0/24 => 10 10.0.20.1
+
+table_add gtp_table pop_gtp 20 =>
+
+table_add gtplookup_table forward 10 => 2
+
+table_add iplookup_table forward 10.0.10.10 => 1
+//table_add iplookup_table forward 10.0.20.1 => 2
+table_add iplookup_table forward 10.0.20.10 => 2
+
+
+table_add switching_table rewrite_macs 1 => 00:00:00:00:01:01 00:00:00:00:00:01
+table_add switching_table rewrite_macs 2 => 00:00:00:00:01:02 00:00:00:00:02:01
+
