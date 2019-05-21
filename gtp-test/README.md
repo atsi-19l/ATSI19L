@@ -12,9 +12,13 @@ Sadly, if we try to do it that way, there is "Ethernet Frame Check Incorrect" er
 1. First of all you need to setup the environment on your Linux machine.
 2. From gtp-test/ directory run the Mininet topology with MPLS program.
 
+
 `sudo python topo.py --behavioral-exe simple_switch --json p4include/gtp_p16.json`
-4. In the Mininet console, check if ping between h1 and h2 works (it shouldn't!)
+
+
+4. In the Mininet console, check if ping between h1 and h2 works (it shouldn't!).
 `h1 ping h2`
+
 5. As expected ping doesn't work, because the static rules weren't populated by control plane. Populate static rules manually by invoking:
 `./install_flow_rules.sh`
 6. Now is the part that doesn't work, if we have our push_gtp function set.
