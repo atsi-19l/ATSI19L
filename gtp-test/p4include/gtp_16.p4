@@ -96,22 +96,10 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
 }
 
 control ingress(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
-    @name(".push_gtp") action push_gtp(bit<32> tunelId, bit<32> dstAddr) {
-        hdr.gtp.setValid();
-        hdr.gtp.tunnelEndID = tunelId;
-        hdr.udp_gtp.setValid();
-        hdr.udp_gtp.srcPort = 16w2152;
-        hdr.udp_gtp.dstPort = 16w2152;
-        hdr.ipv4_gtp.setValid();
-        hdr.ipv4_gtp.dstAddr = dstAddr;
-        hdr.ethernet_gtp.setValid();
-        hdr.ethernet_gtp.etherType = 16w0x800;
-    }
     @name("._drop") action _drop() {
         mark_to_drop(standard_metadata);
     }
     @name(".pop_gtp") action pop_gtp() {
-        hdr.ethernet_gtp.setInvalid();
         hdr.ipv4_gtp.setInvalid();
         hdr.udp_gtp.setInvalid();
         hdr.gtp.setInvalid();
@@ -122,16 +110,6 @@ control ingress(inout headers hdr, inout metadata meta, inout standard_metadata_
     @name(".rewrite_macs") action rewrite_macs(bit<48> srcMac, bit<48> dstMac) {
         hdr.ethernet.srcAddr = srcMac;
         hdr.ethernet.dstAddr = dstMac;
-    }
-    @name(".fec_table") table fec_table {
-        actions = {
-            push_gtp;
-            _drop;
-        }
-        key = {
-            hdr.ipv4.dstAddr: lpm;
-        }
-        size = 1024;
     }
     @name(".gtp_table") table gtp_table {
         actions = {
@@ -174,7 +152,6 @@ control ingress(inout headers hdr, inout metadata meta, inout standard_metadata_
         size = 1024;
     }
     apply {
-        fec_table.apply();
         gtp_table.apply();
         gtplookup_table.apply();
         if (standard_metadata.egress_spec == 9w0) {
@@ -185,7 +162,26 @@ control ingress(inout headers hdr, inout metadata meta, inout standard_metadata_
 }
 
 control egress(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+    @name(".push_gtp") action push_gtp(bit<32> tunelId, bit<32> dstAddr) {
+        hdr.gtp.setValid();
+        hdr.gtp.tunnelEndID = tunelId;
+        hdr.udp_gtp.setValid();
+        hdr.udp_gtp.srcPort = 16w2152;
+        hdr.udp_gtp.dstPort = 16w2152;
+        hdr.ipv4_gtp.setValid();
+        hdr.ipv4_gtp.dstAddr = dstAddr;
+    }
+    @name(".fec_table") table fec_table {
+        actions = {
+            push_gtp;
+        }
+        key = {
+            hdr.ipv4.dstAddr: lpm;
+        }
+        size = 1024;
+    }
     apply {
+	fec_table.apply();
     }
 }
 
@@ -195,6 +191,8 @@ control DeparserImpl(packet_out packet, in headers hdr) {
         packet.emit(hdr.ipv4);
         packet.emit(hdr.udp);
         packet.emit(hdr.gtp);
+	packet.emit(hdr.udp_gtp);
+	packet.emit(hdr.ipv4_gtp);
     }
 }
 
