@@ -375,11 +375,11 @@
       "id" : 0,
       "source_info" : {
         "filename" : "gtp_16.p4",
-        "line" : 188,
+        "line" : 197,
         "column" : 8,
         "source_fragment" : "DeparserImpl"
       },
-      "order" : ["ethernet", "ipv4", "udp", "gtp", "udp_gtp", "ipv4_gtp"]
+      "order" : ["ethernet", "ipv4_gtp", "udp_gtp", "gtp", "ipv4", "udp"]
     }
   ],
   "meter_arrays" : [],
@@ -675,8 +675,30 @@
       "primitives" : []
     },
     {
-      "name" : "push_gtp",
+      "name" : "_drop",
       "id" : 13,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 166,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "push_gtp",
+      "id" : 14,
       "runtime_data" : [
         {
           "name" : "tunelId",
@@ -698,7 +720,7 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 166,
+            "line" : 169,
             "column" : 8,
             "source_fragment" : "hdr.gtp.setValid()"
           }
@@ -717,7 +739,7 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 167,
+            "line" : 170,
             "column" : 8,
             "source_fragment" : "hdr.gtp.tunnelEndID = tunelId"
           }
@@ -732,7 +754,7 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 168,
+            "line" : 171,
             "column" : 8,
             "source_fragment" : "hdr.udp_gtp.setValid()"
           }
@@ -751,7 +773,7 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 169,
+            "line" : 172,
             "column" : 8,
             "source_fragment" : "hdr.udp_gtp.srcPort = 16w2152"
           }
@@ -770,9 +792,28 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 170,
+            "line" : 173,
             "column" : 8,
             "source_fragment" : "hdr.udp_gtp.dstPort = 16w2152"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["udp_gtp", "length_"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0008"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 174,
+            "column" : 1,
+            "source_fragment" : "hdr.udp_gtp.length_ = 8"
           }
         },
         {
@@ -785,7 +826,7 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 171,
+            "line" : 175,
             "column" : 8,
             "source_fragment" : "hdr.ipv4_gtp.setValid()"
           }
@@ -804,9 +845,85 @@
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 172,
+            "line" : 176,
             "column" : 8,
             "source_fragment" : "hdr.ipv4_gtp.dstAddr = dstAddr"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4_gtp", "version"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x04"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 177,
+            "column" : 1,
+            "source_fragment" : "hdr.ipv4_gtp.version = 4"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4_gtp", "ihl"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x05"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 178,
+            "column" : 1,
+            "source_fragment" : "hdr.ipv4_gtp.ihl =5"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4_gtp", "ttl"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0xc8"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 179,
+            "column" : 1,
+            "source_fragment" : "hdr.ipv4_gtp.ttl = 200"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4_gtp", "protocol"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x11"
+            }
+          ],
+          "source_info" : {
+            "filename" : "gtp_16.p4",
+            "line" : 180,
+            "column" : 1,
+            "source_fragment" : "hdr.ipv4_gtp.protocol = 8w0x11"
           }
         }
       ]
@@ -1023,7 +1140,7 @@
           "id" : 4,
           "source_info" : {
             "filename" : "gtp_16.p4",
-            "line" : 174,
+            "line" : 182,
             "column" : 30,
             "source_fragment" : "fec_table"
           },
@@ -1041,11 +1158,12 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [13, 12],
-          "actions" : ["push_gtp", "NoAction"],
+          "action_ids" : [14, 13, 12],
+          "actions" : ["push_gtp", "_drop", "NoAction"],
           "base_default_next" : null,
           "next_tables" : {
             "push_gtp" : null,
+            "_drop" : null,
             "NoAction" : null
           },
           "default_entry" : {

@@ -712,18 +712,27 @@ control ingress(inout headers hdr, inout metadata meta, inout standard_metadata_
 }
 
 control egress(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
+    @name("._drop") action _drop() {
+        mark_to_drop(standard_metadata);
+    }
     @name(".push_gtp") action push_gtp(bit<32> tunelId, bit<32> dstAddr) {
         hdr.gtp.setValid();
         hdr.gtp.tunnelEndID = tunelId;
         hdr.udp_gtp.setValid();
         hdr.udp_gtp.srcPort = 16w2152;
         hdr.udp_gtp.dstPort = 16w2152;
+ hdr.udp_gtp.length_ = 8;
         hdr.ipv4_gtp.setValid();
         hdr.ipv4_gtp.dstAddr = dstAddr;
+ hdr.ipv4_gtp.version = 4;
+ hdr.ipv4_gtp.ihl =5;
+ hdr.ipv4_gtp.ttl = 200;
+ hdr.ipv4_gtp.protocol = 8w0x11;
     }
     @name(".fec_table") table fec_table {
         actions = {
             push_gtp;
+     _drop;
         }
         key = {
             hdr.ipv4.dstAddr: lpm;
@@ -738,11 +747,12 @@ control egress(inout headers hdr, inout metadata meta, inout standard_metadata_t
 control DeparserImpl(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.ipv4);
-        packet.emit(hdr.udp);
-        packet.emit(hdr.gtp);
- packet.emit(hdr.udp_gtp);
  packet.emit(hdr.ipv4_gtp);
+ packet.emit(hdr.udp_gtp);
+        packet.emit(hdr.gtp);
+ packet.emit(hdr.ipv4);
+ packet.emit(hdr.udp);
+
     }
 }
 

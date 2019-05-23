@@ -11,6 +11,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Mininet demo')
 parser.add_argument('--behavioral-exe', help='Path to behavioral executable', type=str, action="store", required=True)
 parser.add_argument('--json', help='Path to JSON config file', type=str, action="store", required=True)
+parser.add_argument('--log-console')
 args = parser.parse_args()
 
 
@@ -24,7 +25,9 @@ class DemoTopo(Topo):
         s1 = self.addSwitch('s1',
                             sw_path=sw_path,
                             json_path=json_path,
-                            thrift_port=9090)
+                            thrift_port=9090,
+			    opts = {"--log-console"}
+			   )
         s2 = self.addSwitch('s2',
                             sw_path=sw_path,
                             json_path=json_path,
