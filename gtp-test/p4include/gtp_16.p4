@@ -73,8 +73,10 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         hdr.ipv4_gtp = hdr.ipv4;
         hdr.udp_gtp = hdr.udp;
         hdr.ethernet_gtp = hdr.ethernet;
+	hdr.udp.setInvalid();
+	hdr.ipv4.setInvalid();
         packet.extract(hdr.gtp);
-        transition parse_ethernet;
+        transition parse_ipv4;
     }
     @name(".parse_ipv4") state parse_ipv4 {
         packet.extract(hdr.ipv4);
@@ -168,14 +170,23 @@ control egress(inout headers hdr, inout metadata meta, inout standard_metadata_t
     @name(".push_gtp") action push_gtp(bit<32> tunelId, bit<32> dstAddr) {
         hdr.gtp.setValid();
         hdr.gtp.tunnelEndID = tunelId;
+	hdr.gtp.version = 1;
+    	hdr.gtp.ptFlag = 1;
+    	hdr.gtp.spare =0;
+    	hdr.gtp.extHdrFlag =0;
+    	hdr.gtp.seqNumberFlag =0;
+    	hdr.gtp.npduFlag =0;
+    	hdr.gtp.msgType =1;
+    	hdr.gtp.len =hdr.ipv4.totalLen;
         hdr.udp_gtp.setValid();
         hdr.udp_gtp.srcPort = 16w2152;
         hdr.udp_gtp.dstPort = 16w2152;
-	hdr.udp_gtp.length_ = 8;
+	hdr.udp_gtp.length_ = hdr.gtp.len+8+8;
         hdr.ipv4_gtp.setValid();
         hdr.ipv4_gtp.dstAddr = dstAddr;
 	hdr.ipv4_gtp.version = 4;
 	hdr.ipv4_gtp.ihl =5;
+	hdr.ipv4_gtp.totalLen =hdr.udp_gtp.length_+20;
 	hdr.ipv4_gtp.ttl = 200;
 	hdr.ipv4_gtp.protocol = 8w0x11;
     }

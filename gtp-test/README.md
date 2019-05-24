@@ -4,8 +4,7 @@ To make testing easier, we created example environment that's easier to manage t
   <img src="images/mpls-network.png" />
 </p>
 ##State of the project##
-Right now, based on Wireshark readings, we can either ping using only ip (nothing to be proud of, because it doesn't use anything from out project), or we can try to use our push_gtp function. 
-Sadly, if we try to do it that way, there is "Ethernet Frame Check Incorrect" error, and ping doesn't return, despite the fact that packet gets to s3-eth1. Error is most probably in our code, or in switch routing settings.
+On simple network architecture, ping work as expected. Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.
 
 ### User guide ###
 
@@ -22,7 +21,7 @@ Sadly, if we try to do it that way, there is "Ethernet Frame Check Incorrect" er
 
 `./install_flow_rules.sh`
 
-6. Now is the part that doesn't work, if we have our push_gtp function set.
+6. Now it should fully work
 
 `h1 ping h2`
 
