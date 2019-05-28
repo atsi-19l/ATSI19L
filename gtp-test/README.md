@@ -15,7 +15,8 @@ The project is based on following repos and networking solutions:
 * P4C (P4 language compiler) - can be accessed here: https://github.com/p4lang/p4c
 * Mininet (https://github.com/mininet/mininet)
 
-This project enables the user to emulate functional network using Mininet and the P4 language, and involves communication with GTP-U.
+This project enables the user to emulate functional network using Mininet and the P4_16 language, and involves communication with GTP-U.
+
 
 ## User guide ##
 
@@ -35,6 +36,25 @@ This project enables the user to emulate functional network using Mininet and th
 6. Now it should fully work
 
 `h1 ping h2`
+
+## Changelog ##
+In chronological order:
+* network layout and addresation project
+* attempts to run mininet and pre-configuration of the environment (mininet+bmv+simple_switch)
+* first tries to compile the code using p4_14 with autotranslation
+* code rewritten to p4_16
+* implementation problems occured - attempts to run an example with MPLS
+* modification of the MPLS example to fit the project requirements (GTP)
+* modified invalid routing rules
+* debugging and tracing packet flow in the network in order to find bugs
+* moved some logic (decapsulation) from egress to ingress block
+* deparser fixes
+* push_gtp function extended (fields required to fulfill header requirements)
+* encapsultation fixes
+* GTP parser fixes
+
+
+
 
 ## Acknowledgements ##
 We would like to thank mr Tomasz Osiński for his understanding attitude, willingness to help, dedication and involvement in the project support.
