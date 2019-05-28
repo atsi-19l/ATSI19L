@@ -2,8 +2,6 @@ table_add fec_table push_gtp 10.0.20.0/24 => 10 10.0.20.1
 
 table_add gtp_table pop_gtp 20 =>
 
-table_add gtplookup_table forward 10 => 2
-
 table_add iplookup_table forward 10.0.10.10 => 1
 table_add iplookup_table forward 10.0.20.10 => 2
 
