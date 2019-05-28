@@ -5,7 +5,7 @@ To make testing easier, we created example environment that's easier to manage t
 </p>
 
 ## State of the project ##
-On simple network architecture, ping work as expected. ~~Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.~~
+On simple network architecture, ping work as expected. ~~Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.~~  
 After fixes, the GTP works properly, with two minor issues:
 * the header of the GTP packet indicates that the GTP-C is sent (it should be GTP-U acc. to project requirements) - checked by Wireshark
 * Message Type field for user plane message should be set to 255.
