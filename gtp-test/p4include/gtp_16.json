@@ -895,7 +895,7 @@
             },
             {
               "type" : "hexstr",
-              "value" : "0x9B"
+              "value" : "0xFF"
             }
           ],
           "source_info" : {
