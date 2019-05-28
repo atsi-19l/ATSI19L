@@ -5,7 +5,17 @@ To make testing easier, we created example environment that's easier to manage t
 </p>
 
 ## State of the project ##
-On simple network architecture, ping work as expected. Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.
+On simple network architecture, ping work as expected. ~~Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.~~
+After fixes, the GTP works properly, with two minor issues:
+* the header of the GTP packet indicates that the GTP-C is sent (it should be GTP-U acc. to project requirements) - checked by Wireshark
+* Message Type field for user plane message should be set to 255.
+
+## Architecture ##
+The project is based on following repos and networking solutions:
+* P4C (P4 language compiler) - can be accessed here: https://github.com/p4lang/p4c
+* Mininet (https://github.com/mininet/mininet)
+
+This project enables the user to emulate functional network using Mininet and the P4 language, and involves communication with GTP-U.
 
 ## User guide ##
 
@@ -26,3 +36,5 @@ On simple network architecture, ping work as expected. Sadly, because push_gtp i
 
 `h1 ping h2`
 
+## Acknowledgements ##
+We would like to thank mr Tomasz Osiński for his understanding attitude, willingness to help, dedication and involvement in the project support.
