@@ -895,14 +895,14 @@
             },
             {
               "type" : "hexstr",
-              "value" : "0x01"
+              "value" : "0x9B"
             }
           ],
           "source_info" : {
             "filename" : "gtp_16.p4",
             "line" : 179,
             "column" : 5,
-            "source_fragment" : "hdr.gtp.msgType =1"
+            "source_fragment" : "hdr.gtp.msgType =155"
           }
         },
         {
