@@ -5,10 +5,7 @@ To make testing easier, we created example environment that's easier to manage t
 </p>
 
 ## State of the project ##
-On simple network architecture, ping work as expected. ~~Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.~~  
-After fixes, the GTP works properly, with two minor issues:
-* the header of the GTP packet indicates that the GTP-C is sent (it should be GTP-U acc. to project requirements) - checked by Wireshark
-* Message Type field for user plane message should be set to 255.
+On simple network architecture, GTP encapsulation works as expected. Because of P4 architecture, push_gtp is in egress part of the switch code. In effect we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.  
 
 ## Architecture ##
 The project is based on following repos and networking solutions:
@@ -16,8 +13,22 @@ The project is based on following repos and networking solutions:
 * Mininet (https://github.com/mininet/mininet)
 
 This project enables the user to emulate functional network using Mininet and the P4_16 language, and involves communication with GTP-U.
-
-
+## Project Details ##
+* Code of our project is written in P4-16, because it's current version of the language
+* Functions pop_gtp is in ingress part of the code, while push_gtp in egress, because it's logical to put those elements in those functions
+* We define 3 tables connected with gtp in our code:
+  * gtp_lookup used to check how we have to forward packets with gtp header
+  * gtp_table that's used to check is it the endpoint of the tunnel and pop_gtp
+  * fec_table, that's used to check if that ip packet have to be encapsulated into gtp
+* This table format is inherited from the source MPLS-demo that we based our project on
+* push_gtp function not only have to add headers, but set correct values to those fields. It was especially hard in terms of packet lengths, because definition of this field is different between protocols and invalid value could have gruesome consequences
+* pop_gtp have to invalidate gtp headers
+* Parser functions may be interesting case, because parse_gtp have to:
+  * Copy headers above gtp, from instance intended for non-gtp to gtp instances
+  * Invalidate headers we copied from, because we don't know what headers are below gtp, and there may be a case when there is no eg. UDP, and we don't want to add it.
+  * Start parsing IPv4
+* We decided to do our tests on simple network, because there is less that can go wrong other than our switch code, even tough we had bigger network ready in main folder of this repository
+ 
 ## User guide ##
 
 1. First of all you need to setup the environment on your Linux machine.
