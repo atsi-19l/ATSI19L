@@ -1,7 +1,7 @@
 ## GTP Example ##
 To make testing easier, we created example environment that's easier to manage than our main test case, by modyfying MPLS Demo we found in P4 Research repository (even this readme is based on it). Because of that topology is exactly the same:
 <p align="center">
-  <img src="images/mpls-network.png" />
+  <img src="images/GTP diagram.PNG" />
 </p>
 ##State of the project##
 On simple network architecture, ping work as expected. Sadly, because push_gtp is in egress part of the switch code, we have to populate table with additional line, to forward packet at first by ipv4, and only s2 truly uses gtp teid.
