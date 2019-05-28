@@ -176,7 +176,7 @@ control egress(inout headers hdr, inout metadata meta, inout standard_metadata_t
     	hdr.gtp.extHdrFlag =0;
     	hdr.gtp.seqNumberFlag =0;
     	hdr.gtp.npduFlag =0;
-    	hdr.gtp.msgType =1;
+    	hdr.gtp.msgType =255;
     	hdr.gtp.len =hdr.ipv4.totalLen;
         hdr.udp_gtp.setValid();
         hdr.udp_gtp.srcPort = 16w2152;
