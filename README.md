@@ -1,6 +1,8 @@
 # ATSI19L
 
-This is the official repository of ATSI Project (NC&SC&JJ&MO).
+This is the official repository of the ATSI Project (NC&SC&JJ&MO).
+
+**Full readme can be found in gtp-test directory [here](https://github.com/atsi-19l/ATSI19L/blob/master/gtp-test/README.md).**
 
 This project stage consists of:
 - mininet configuration with static routing rules
