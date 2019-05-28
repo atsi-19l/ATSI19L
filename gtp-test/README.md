@@ -1,5 +1,5 @@
 ## GTP Example ##
-To make testing easier, we created example environment that's easier to manage than our main test case, by modyfying MPLS Demo we found in P4 Research repository (even this readme is based on it). Because of that topology is exactly the same:
+To make testing easier, we created example environment that's easier to manage than our main test case, by modyfying MPLS Demo we found in P4 Research repository (even this readme is based on it). Because of that topology is similar (in terms of IP addresses), however, the GTP is used instead of MPLS, as shown below:
 <p align="center">
   <img src="images/GTP diagram.PNG" />
 </p>
